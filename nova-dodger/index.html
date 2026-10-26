@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nova Dodger">
+<meta name="theme-color" content="#07061a">
+<meta name="color-scheme" content="dark">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Nova Dodger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout concept: one portrait play field (max 560px wide, centered on desktop), HUD on top, two thumb buttons at the bottom corners, panels float over the field. Single dark look on purpose, it is a game screen. */
+:root {
+  --bg: #07061a;
+  --field: #0b0824;
+  --panel: #14113a;
+  --ink: #eef0ff;
+  --dim: #9aa0c8;
+  --accent: #5ef0ff;
+  --gold: #ffcf4a;
+  --hot: #ff4d6d;
+  --good: #6dff9a;
+  --font: "Chakra Petch", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+#stage {
+  position: relative;
+  height: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  overflow: hidden;
+  background: var(--field);
+  box-shadow: 0 0 0 1px #ffffff14;
+  touch-action: none;
+}
+#c { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+#ui {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  padding-block: 14px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+#hud { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+#score { font-size: 38px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+#streak { margin-top: 4px; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); font-variant-numeric: tabular-nums; }
+#lives { display: flex; gap: 8px; padding-top: 6px; }
+#lives i { width: 14px; height: 14px; transform: rotate(45deg); border: 2px solid var(--accent); background: var(--accent); border-radius: 2px; }
+#lives i.off { background: transparent; opacity: 0.35; }
+#bar { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
+button {
+  font: inherit;
+  color: var(--ink);
+  pointer-events: auto;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+#bar button {
+  min-width: 96px;
+  min-height: 48px;
+  padding: 10px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: #1b1750cc;
+  border: 1px solid #ffffff2e;
+  border-radius: 10px;
+}
+#bar button:focus-visible, .panel button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#bar button:disabled { opacity: 0.45; cursor: default; }
+#bar button.live { border-color: var(--accent); color: var(--accent); }
+#bar b { color: var(--accent); margin-left: 6px; font-variant-numeric: tabular-nums; }
+.panel {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  transform: translate(-50%, -50%);
+  width: min(86%, 340px);
+  padding: 22px 20px 20px;
+  background: var(--panel);
+  border: 1px solid #ffffff26;
+  border-radius: 14px;
+  box-shadow: 0 18px 60px #000a;
+  text-align: left;
+  pointer-events: auto;
+}
+.panel[hidden] { display: none; }
+.panel h1 { margin: 0 0 2px; font-size: 32px; line-height: 1.05; letter-spacing: 0.02em; text-wrap: balance; }
+.panel .tag { margin: 0 0 14px; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.panel p { margin: 0 0 12px; font-size: 15px; line-height: 1.45; color: var(--dim); max-width: 34ch; }
+.panel .big { font-size: 44px; font-weight: 700; line-height: 1; color: var(--ink); margin: 4px 0 2px; font-variant-numeric: tabular-nums; }
+.panel .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+.panel button {
+  flex: 1 1 120px;
+  min-height: 48px;
+  padding: 10px 16px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: #231f60;
+  border: 1px solid #ffffff30;
+  border-radius: 10px;
+}
+.panel button.primary { background: var(--accent); color: #06122a; border-color: var(--accent); }
+.panel .small { margin: 12px 0 0; font-size: 12px; color: var(--dim); }
+@media (prefers-reduced-motion: reduce) { .panel { transition: none; } }
+</style>
+
+<style>
+/* Standalone page: the host page padded the safe areas for us, so do it here. */
+html { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); background: #07061a; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="c" aria-label="Nova Dodger play field"></canvas>
+  <div id="ui">
+    <div id="hud">
+      <div>
+        <div id="score">0</div>
+        <div id="streak">Streak 0 · x1</div>
+      </div>
+      <div id="lives" aria-label="Lives"></div>
+    </div>
+    <div id="bar">
+      <button id="btnMenu" type="button">Menu</button>
+      <button id="btnItems" type="button">Items <b id="warpN">1</b></button>
+    </div>
+    <div id="panel" class="panel" hidden></div>
+  </div>
+</div>
+
+<script>
+// ===================================
+// Nova Dodger
+// v0.0.1 BUILD 2026-10-26 07:00
+// Alpha proof of concept: a touch-drag dodge game. Steer the ship, avoid hazards, collect gold to build a streak, use Items to slow time.
+// dev by @dastefster 🍒🔨
+// ===================================
+
+(() => {
+  "use strict";
+
+  // ===================================
+  // SETUP
+  // ===================================
+
+  const stage = document.getElementById("stage");
+  const canvas = document.getElementById("c");
+  const ctx = canvas.getContext("2d");
+  const elScore = document.getElementById("score");
+  const elStreak = document.getElementById("streak");
+  const elLives = document.getElementById("lives");
+  const elWarpN = document.getElementById("warpN");
+  const btnItems = document.getElementById("btnItems");
+  const btnMenu = document.getElementById("btnMenu");
+  const panel = document.getElementById("panel");
+
+  const TAU = Math.PI * 2;
+  const rnd = (a, b) => a + Math.random() * (b - a);
+
+  let W = 0, H = 0, dpr = 1, U = 1;
+  let stars = [], blobs = [];
+  let ac = null;
+  let soundOn = true;
+
+  const S = {
+    mode: "title",
+    t: 0,
+    score: 0,
+    best: 0,
+    lives: 3,
+    streak: 0,
+    mult: 1,
+    warp: 1,
+    warpT: 0,
+    inv: 0,
+    shake: 0,
+    ents: [],
+    parts: [],
+    sp: { orb: 0.5, pod: 3, dart: 4, gold: 1, warp: 14 },
+    ship: { x: 0, y: 0, tx: 0, ty: 0, r: 9 },
+  };
+
+  // ===================================
+  // STORAGE AND SOUND
+  // ===================================
+
+  function loadBest() {
+    try { return Number(localStorage.getItem("novaDodgerBest")) || 0; } catch (e) { return 0; }
+  }
+
+  function saveBest(v) {
+    try { localStorage.setItem("novaDodgerBest", String(v)); } catch (e) { /* storage can be blocked */ }
+  }
+
+  function audio() {
+    if (!ac) {
+      try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ac = null; }
+    }
+    if (ac && ac.state === "suspended") ac.resume();
+  }
+
+  function blip(freq, dur, type, vol, slide) {
+    if (!soundOn || !ac) return;
+    const t = ac.currentTime;
+    const o = ac.createOscillator();
+    const g = ac.createGain();
+    o.type = type || "sine";
+    o.frequency.setValueAtTime(freq, t);
+    if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(40, freq * slide), t + dur);
+    g.gain.setValueAtTime(vol || 0.07, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g);
+    g.connect(ac.destination);
+    o.start(t);
+    o.stop(t + dur + 0.02);
+  }
+
+  // ===================================
+  // LAYOUT
+  // ===================================
+
+  function resize() {
+    const r = stage.getBoundingClientRect();
+    W = Math.max(1, r.width);
+    H = Math.max(1, r.height);
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    U = Math.max(0.8, Math.min(1.4, W / 400));
+    S.ship.r = 9 * U;
+    initBackdrop();
+    clampShip();
+    if (S.mode === "title") parkShip();
+  }
+
+  function initBackdrop() {
+    stars = [];
+    const n = Math.round((W * H) / 5200);
+    for (let i = 0; i < n; i++) stars.push({ x: rnd(0, W), y: rnd(0, H), z: rnd(0.3, 1) });
+    blobs = [
+      { x: W * 0.25, y: H * 0.3, r: W * 0.8, c: "120,60,255" },
+      { x: W * 0.85, y: H * 0.72, r: W * 0.9, c: "30,120,255" },
+    ];
+  }
+
+  function parkShip() {
+    const s = S.ship;
+    s.x = s.tx = W / 2;
+    s.y = s.ty = H * 0.72;
+  }
+
+  function clampShip() {
+    const s = S.ship;
+    const mx = s.r * 1.9 + 6;
+    s.tx = Math.max(mx, Math.min(W - mx, s.tx));
+    s.ty = Math.max(96, Math.min(H - 92, s.ty));
+    s.x = Math.max(mx, Math.min(W - mx, s.x));
+    s.y = Math.max(96, Math.min(H - 92, s.y));
+  }
+
+  // ===================================
+  // SPAWNING
+  // ===================================
+
+  function fallSpeed(base) {
+    return Math.min(base + Math.min(S.t, 90) * 3.2, base + 300) * U;
+  }
+
+  function spawnOrb() {
+    const r = rnd(11, 19) * U;
+    S.ents.push({
+      k: "orb", x: rnd(r, W - r), y: -r * 2,
+      vx: Math.random() < 0.35 ? rnd(-40, 40) * U : 0,
+      vy: fallSpeed(140) * rnd(0.8, 1.3),
+      r, cr: r * 1.05, rot: rnd(0, TAU), vr: rnd(-3, 3),
+    });
+  }
+
+  function spawnPod() {
+    const r = 13 * U;
+    S.ents.push({
+      k: "pod", x: 0, bx: rnd(r + 60 * U, W - r - 60 * U), amp: rnd(40, 80) * U,
+      y: -r * 2, vy: fallSpeed(110), r, cr: r * 0.95, phase: rnd(0, TAU), rot: 0, vr: 1.4,
+    });
+  }
+
+  function spawnWarn() {
+    const x = rnd(30 * U, W - 30 * U);
+    S.ents.push({ k: "warn", x, y: 0, life: 0.9, max: 0.9, r: 0, cr: 0 });
+  }
+
+  function spawnDart(x) {
+    const r = 8 * U;
+    S.ents.push({ k: "dart", x, y: -r * 3, vx: 0, vy: 560 * U, r, cr: r });
+  }
+
+  function spawnGold() {
+    const r = 11 * U;
+    S.ents.push({ k: "gold", x: rnd(r + 10, W - r - 10), y: -r * 2, vx: 0, vy: 120 * U, r, cr: r + 4 * U, phase: rnd(0, TAU) });
+  }
+
+  function spawnWarpItem() {
+    const r = 13 * U;
+    S.ents.push({ k: "warp", x: rnd(r + 10, W - r - 10), y: -r * 2, vx: 0, vy: 105 * U, r, cr: r + 4 * U, phase: rnd(0, TAU) });
+  }
+
+  function burst(x, y, color, n, speed) {
+    for (let i = 0; i < n; i++) {
+      const a = rnd(0, TAU);
+      const v = rnd(0.3, 1) * speed * U;
+      S.parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: rnd(0.35, 0.7), max: 0.7, r: rnd(1.5, 3.2) * U, c: color });
+    }
+  }
+
+  // ===================================
+  // GAME FLOW
+  // ===================================
+
+  function startGame() {
+    S.mode = "play";
+    S.t = 0;
+    S.score = 0;
+    S.lives = 3;
+    S.streak = 0;
+    S.mult = 1;
+    S.warp = 1;
+    S.warpT = 0;
+    S.inv = 0;
+    S.shake = 0;
+    S.ents = [];
+    S.parts = [];
+    S.sp = { orb: 0.5, pod: 3, dart: 4, gold: 1, warp: 14 };
+    parkShip();
+    hidePanel();
+    paintHud(true);
+  }
+
+  function pauseGame() {
+    if (S.mode !== "play") return;
+    S.mode = "pause";
+    showPanel(
+      '<h1>Paused</h1><p class="tag">Nova Dodger</p>' +
+      '<div class="row"><button class="primary" data-act="resume">Resume</button><button data-act="restart">Restart</button></div>' +
+      '<div class="row"><button data-act="sound">Sound: ' + (soundOn ? "on" : "off") + "</button></div>"
+    );
+  }
+
+  function resumeGame() {
+    if (S.mode !== "pause") return;
+    S.mode = "play";
+    hidePanel();
+  }
+
+  function endGame() {
+    S.mode = "over";
+    const final = Math.floor(S.score);
+    const isBest = final > S.best;
+    if (isBest) { S.best = final; saveBest(final); }
+    showPanel(
+      '<h1>Run over</h1><p class="tag">' + (isBest ? "New best" : "Best " + S.best) + "</p>" +
+      '<div class="big">' + final + "</div><p>points</p>" +
+      '<div class="row"><button class="primary" data-act="restart">Play again</button></div>'
+    );
+  }
+
+  function showTitle() {
+    S.mode = "title";
+    parkShip();
+    showPanel(
+      "<h1>Nova Dodger</h1><p class=\"tag\">Alpha 0.1 · proof of concept</p>" +
+      "<p>Drag anywhere to steer your ship. Dodge the spiked orbs, green pods and red darts. Grab gold to build a streak, and use Items to slow time.</p>" +
+      '<div class="row"><button class="primary" data-act="start">Start</button></div>' +
+      '<p class="small">Best ' + S.best + "</p>"
+    );
+  }
+
+  function showPanel(html) { panel.innerHTML = html; panel.hidden = false; }
+  function hidePanel() { panel.hidden = true; }
+
+  function useWarp() {
+    if (S.mode !== "play" || S.warp <= 0 || S.warpT > 0) return;
+    S.warp--;
+    S.warpT = 5;
+    blip(300, 0.35, "sine", 0.08, 2.4);
+  }
+
+  function hitShip() {
+    S.lives--;
+    S.streak = 0;
+    S.mult = 1;
+    S.inv = 1.6;
+    S.shake = 0.35;
+    burst(S.ship.x, S.ship.y, "#ff4d6d", 22, 220);
+    blip(150, 0.3, "sawtooth", 0.09, 0.4);
+    paintHud(true);
+    if (S.lives <= 0) endGame();
+  }
+
+  // ===================================
+  // UPDATE
+  // ===================================
+
+  function update(dt) {
+    const s = S.ship;
+    const slow = S.warpT > 0 ? 0.5 : 1;
+    const tdt = dt * slow;
+
+    S.t += dt;
+    S.score += dt * 6 * S.mult;
+    if (S.warpT > 0) S.warpT = Math.max(0, S.warpT - dt);
+    if (S.inv > 0) S.inv -= dt;
+    if (S.shake > 0) S.shake = Math.max(0, S.shake - dt);
+
+    // keyboard steering, for desktop
+    const kx = (keys.right ? 1 : 0) - (keys.left ? 1 : 0);
+    const ky = (keys.down ? 1 : 0) - (keys.up ? 1 : 0);
+    if (kx || ky) { s.tx += kx * 460 * U * dt; s.ty += ky * 460 * U * dt; }
+    clampShip();
+    const f = 1 - Math.exp(-dt * 16);
+    s.x += (s.tx - s.x) * f;
+    s.y += (s.ty - s.y) * f;
+
+    spawnTick(tdt);
+
+    const born = [];
+    for (const e of S.ents) {
+      if (e.k === "warn") {
+        e.life -= tdt;
+        if (e.life <= 0) { e.dead = true; spawnDartLater(born, e.x); }
+        continue;
+      }
+      e.y += e.vy * tdt;
+      if (e.k === "pod") { e.phase += 2 * tdt; e.x = e.bx + Math.sin(e.phase) * e.amp; e.rot += e.vr * tdt; }
+      else if (e.k === "orb") { e.x += e.vx * tdt; e.rot += e.vr * tdt; }
+      if (e.y > H + 60) e.dead = true;
+    }
+    for (const b of born) S.ents.push(b);
+
+    // collisions
+    for (const e of S.ents) {
+      if (e.dead || e.k === "warn") continue;
+      const dx = e.x - s.x, dy = e.y - s.y;
+      const rr = e.cr + s.r;
+      if (dx * dx + dy * dy > rr * rr) continue;
+      if (e.k === "gold") {
+        e.dead = true;
+        S.streak++;
+        S.mult = Math.min(8, 1 + Math.floor(S.streak / 5));
+        S.score += 25 * S.mult;
+        burst(e.x, e.y, "#ffcf4a", 12, 150);
+        blip(660 + Math.min(S.streak, 20) * 25, 0.12, "triangle", 0.07, 1.5);
+        paintHud(true);
+      } else if (e.k === "warp") {
+        e.dead = true;
+        S.warp = Math.min(5, S.warp + 1);
+        burst(e.x, e.y, "#5ef0ff", 14, 170);
+        blip(520, 0.2, "sine", 0.08, 1.8);
+        paintHud(true);
+      } else if (S.inv <= 0) {
+        e.dead = true;
+        hitShip();
+        if (S.mode !== "play") return;
+      }
+    }
+    S.ents = S.ents.filter((e) => !e.dead);
+    updateParts(dt);
+    paintHud(false);
+  }
+
+  function spawnDartLater(list, x) {
+    const r = 8 * U;
+    list.push({ k: "dart", x, y: -r * 3, vx: 0, vy: 560 * U, r, cr: r });
+  }
+
+  function spawnTick(tdt) {
+    const v = () => 0.8 + Math.random() * 0.5;
+    S.sp.orb -= tdt;
+    if (S.sp.orb <= 0) { spawnOrb(); S.sp.orb = Math.max(0.24, 0.8 - S.t * 0.01) * v(); }
+    if (S.t > 6) {
+      S.sp.pod -= tdt;
+      if (S.sp.pod <= 0) { spawnPod(); S.sp.pod = Math.max(0.9, 2.2 - S.t * 0.015) * v(); }
+    }
+    if (S.t > 18) {
+      S.sp.dart -= tdt;
+      if (S.sp.dart <= 0) { spawnWarn(); S.sp.dart = Math.max(1.8, 4.2 - S.t * 0.03) * v(); }
+    }
+    S.sp.gold -= tdt;
+    if (S.sp.gold <= 0) { spawnGold(); S.sp.gold = 1.1 + Math.random() * 0.9; }
+    S.sp.warp -= tdt;
+    if (S.sp.warp <= 0) { spawnWarpItem(); S.sp.warp = 16 + Math.random() * 10; }
+  }
+
+  function updateParts(dt) {
+    for (const p of S.parts) {
+      p.life -= dt;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.vx *= 0.96;
+      p.vy *= 0.96;
+    }
+    S.parts = S.parts.filter((p) => p.life > 0);
+  }
+
+  // ===================================
+  // HUD
+  // ===================================
+
+  let lastScore = -1, lastStreakText = "", lastLives = -1, lastWarp = -1, lastWarpLive = null;
+
+  function paintHud(force) {
+    const sc = Math.floor(S.score);
+    if (force || sc !== lastScore) { elScore.textContent = String(sc); lastScore = sc; }
+    const st = "Streak " + S.streak + " · x" + S.mult;
+    if (st !== lastStreakText) { elStreak.textContent = st; lastStreakText = st; }
+    if (S.lives !== lastLives) {
+      elLives.innerHTML = "";
+      for (let i = 0; i < 3; i++) {
+        const d = document.createElement("i");
+        if (i >= S.lives) d.className = "off";
+        elLives.appendChild(d);
+      }
+      lastLives = S.lives;
+    }
+    if (S.warp !== lastWarp) { elWarpN.textContent = "x" + S.warp; lastWarp = S.warp; }
+    const live = S.warpT > 0;
+    if (live !== lastWarpLive || force) {
+      btnItems.classList.toggle("live", live);
+      lastWarpLive = live;
+    }
+    btnItems.disabled = S.warp <= 0 || live || S.mode !== "play";
+  }
+
+  // ===================================
+  // DRAWING
+  // ===================================
+
+  function drawBackdrop(dt) {
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, "#07061a");
+    g.addColorStop(1, "#1a0f3a");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+    for (const b of blobs) {
+      const rg = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
+      rg.addColorStop(0, "rgba(" + b.c + ",0.18)");
+      rg.addColorStop(1, "rgba(" + b.c + ",0)");
+      ctx.fillStyle = rg;
+      ctx.fillRect(0, 0, W, H);
+    }
+    const speed = (S.mode === "play" ? 60 : 18) * (S.warpT > 0 ? 0.5 : 1) * U;
+    for (const s of stars) {
+      s.y += speed * s.z * dt;
+      if (s.y > H) { s.y = -2; s.x = rnd(0, W); }
+      ctx.globalAlpha = 0.35 + s.z * 0.65;
+      ctx.fillStyle = "#cfd6ff";
+      ctx.fillRect(s.x, s.y, s.z * 2, s.z * 2);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function starPath(n, ro, ri) {
+    ctx.beginPath();
+    for (let i = 0; i < n * 2; i++) {
+      const a = (i * Math.PI) / n;
+      const r = i % 2 ? ri : ro;
+      ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+    }
+    ctx.closePath();
+  }
+
+  function drawOrb(e) {
+    ctx.save();
+    ctx.translate(e.x, e.y);
+    ctx.rotate(e.rot);
+    starPath(8, e.r * 1.35, e.r * 0.8);
+    ctx.fillStyle = "#e8ebf7";
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#8f96c4";
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(0, 0, e.r * 0.42, 0, TAU);
+    ctx.fillStyle = "#1a1740";
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawPod(e) {
+    ctx.save();
+    ctx.translate(e.x, e.y);
+    ctx.rotate(e.rot);
+    const rg = ctx.createRadialGradient(0, 0, 0, 0, 0, e.r * 1.3);
+    rg.addColorStop(0, "#b9ffd0");
+    rg.addColorStop(1, "#1fbf5c");
+    ctx.beginPath();
+    for (let i = 0; i < 6; i++) {
+      const a = (i * TAU) / 6;
+      ctx.lineTo(Math.cos(a) * e.r * 1.15, Math.sin(a) * e.r * 1.15);
+    }
+    ctx.closePath();
+    ctx.fillStyle = rg;
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#6dff9a";
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawDart(e) {
+    ctx.save();
+    ctx.translate(e.x, e.y);
+    ctx.beginPath();
+    ctx.moveTo(0, e.r * 2.6);
+    ctx.lineTo(-e.r * 0.95, -e.r * 1.8);
+    ctx.lineTo(0, -e.r * 1.0);
+    ctx.lineTo(e.r * 0.95, -e.r * 1.8);
+    ctx.closePath();
+    ctx.fillStyle = "#ff4d6d";
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawWarn(e) {
+    const k = 1 - e.life / e.max;
+    ctx.save();
+    ctx.globalAlpha = 0.35 + 0.5 * Math.abs(Math.sin(k * 14));
+    ctx.fillStyle = "#ff4d6d";
+    const y = 70 * U;
+    ctx.beginPath();
+    ctx.moveTo(e.x, y + 16 * U);
+    ctx.lineTo(e.x - 10 * U, y);
+    ctx.lineTo(e.x + 10 * U, y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.globalAlpha = 0.18;
+    ctx.fillRect(e.x - 1, y + 18 * U, 2, H);
+    ctx.restore();
+  }
+
+  function drawGold(e) {
+    const pulse = 1 + 0.1 * Math.sin(S.t * 6 + e.phase);
+    ctx.save();
+    ctx.translate(e.x, e.y);
+    ctx.scale(pulse, pulse);
+    ctx.shadowColor = "#ffcf4a";
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.arc(0, 0, e.r, 0, TAU);
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#ffcf4a";
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    ctx.beginPath();
+    ctx.arc(0, 0, e.r * 0.4, 0, TAU);
+    ctx.fillStyle = "#fff0b8";
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawWarpItem(e) {
+    const pulse = 1 + 0.08 * Math.sin(S.t * 5 + e.phase);
+    ctx.save();
+    ctx.translate(e.x, e.y);
+    ctx.scale(pulse, pulse);
+    ctx.shadowColor = "#5ef0ff";
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.arc(0, 0, e.r, 0, TAU);
+    ctx.fillStyle = "#0b2a3a";
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#5ef0ff";
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    for (const dx of [-4, 3]) {
+      ctx.beginPath();
+      ctx.moveTo(dx * U - 2, -5 * U);
+      ctx.lineTo(dx * U + 3, 0);
+      ctx.lineTo(dx * U - 2, 5 * U);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawShip() {
+    const s = S.ship;
+    if (S.warpT > 0) {
+      for (let k = 0; k < 3; k++) {
+        const p = ((S.t * 60 + k * 20) % 60) / 60;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r * 1.8 + p * 34 * U, 0, TAU);
+        ctx.strokeStyle = "rgba(94,240,255," + (0.5 * (1 - p)).toFixed(3) + ")";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    }
+    const blink = S.inv > 0 && Math.floor(S.inv * 14) % 2 === 0;
+    ctx.save();
+    ctx.globalAlpha = blink ? 0.3 : 1;
+    ctx.translate(s.x, s.y);
+    ctx.rotate(S.t * 2.2);
+    starPath(4, s.r * 1.9, s.r * 0.6);
+    ctx.shadowColor = "#5ef0ff";
+    ctx.shadowBlur = 18;
+    ctx.fillStyle = "#bdf8ff";
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.beginPath();
+    ctx.arc(0, 0, s.r * 0.42, 0, TAU);
+    ctx.fillStyle = "#0b0824";
+    ctx.fill();
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = "#5ef0ff";
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function draw(dt) {
+    ctx.save();
+    if (S.shake > 0) ctx.translate(rnd(-1, 1) * S.shake * 14, rnd(-1, 1) * S.shake * 14);
+    drawBackdrop(dt);
+    for (const e of S.ents) {
+      if (e.k === "orb") drawOrb(e);
+      else if (e.k === "pod") drawPod(e);
+      else if (e.k === "dart") drawDart(e);
+      else if (e.k === "warn") drawWarn(e);
+      else if (e.k === "gold") drawGold(e);
+      else if (e.k === "warp") drawWarpItem(e);
+    }
+    drawShip();
+    for (const p of S.parts) {
+      ctx.globalAlpha = Math.max(0, p.life / p.max);
+      ctx.fillStyle = p.c;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, TAU);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    if (S.warpT > 0) {
+      const vg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.3, W / 2, H / 2, Math.max(W, H) * 0.75);
+      vg.addColorStop(0, "rgba(94,240,255,0)");
+      vg.addColorStop(1, "rgba(94,240,255,0.16)");
+      ctx.fillStyle = vg;
+      ctx.fillRect(0, 0, W, H);
+    }
+    ctx.restore();
+  }
+
+  // ===================================
+  // INPUT
+  // ===================================
+
+  const keys = { left: false, right: false, up: false, down: false };
+  let ptrDown = false;
+
+  function setTarget(e) {
+    if (S.mode !== "play") return;
+    const r = stage.getBoundingClientRect();
+    // a touch sits the ship above the finger so it stays visible
+    const lift = e.pointerType === "touch" ? 64 * U : 0;
+    S.ship.tx = e.clientX - r.left;
+    S.ship.ty = e.clientY - r.top - lift;
+  }
+
+  stage.addEventListener("pointerdown", (e) => {
+    if (e.target.closest("button, #panel")) return;
+    ptrDown = true;
+    audio();
+    setTarget(e);
+    try { stage.setPointerCapture(e.pointerId); } catch (err) { /* not all browsers allow it */ }
+  });
+  stage.addEventListener("pointermove", (e) => { if (ptrDown || e.pointerType === "mouse") setTarget(e); });
+  stage.addEventListener("pointerup", () => { ptrDown = false; });
+  stage.addEventListener("pointercancel", () => { ptrDown = false; });
+
+  function setKey(e, down) {
+    const k = e.key;
+    let used = true;
+    if (k === "ArrowLeft" || k === "a" || k === "A") keys.left = down;
+    else if (k === "ArrowRight" || k === "d" || k === "D") keys.right = down;
+    else if (k === "ArrowUp" || k === "w" || k === "W") keys.up = down;
+    else if (k === "ArrowDown" || k === "s" || k === "S") keys.down = down;
+    else used = false;
+    if (used) e.preventDefault();
+  }
+
+  window.addEventListener("keydown", (e) => {
+    setKey(e, true);
+    if (e.key === " " || e.key === "e" || e.key === "E") { e.preventDefault(); useWarp(); }
+    if (e.key === "Escape" || e.key === "p" || e.key === "P") {
+      if (S.mode === "play") pauseGame();
+      else if (S.mode === "pause") resumeGame();
+    }
+  });
+  window.addEventListener("keyup", (e) => setKey(e, false));
+
+  btnMenu.addEventListener("click", () => { audio(); if (S.mode === "play") pauseGame(); else if (S.mode === "pause") resumeGame(); });
+  btnItems.addEventListener("click", () => { audio(); useWarp(); });
+
+  panel.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-act]");
+    if (!b) return;
+    audio();
+    const act = b.dataset.act;
+    if (act === "start" || act === "restart") startGame();
+    else if (act === "resume") resumeGame();
+    else if (act === "sound") { soundOn = !soundOn; S.mode = "play"; pauseGame(); }
+  });
+
+  document.addEventListener("visibilitychange", () => { if (document.hidden) pauseGame(); });
+  window.addEventListener("resize", resize);
+
+  // ===================================
+  // MAIN LOOP
+  // ===================================
+
+  let last = 0;
+
+  function frame(ts) {
+    const dt = Math.min(0.033, (ts - last) / 1000 || 0.016);
+    last = ts;
+    if (S.mode === "play") update(dt);
+    else if (S.mode === "title") { S.t += dt; S.ship.y = H * 0.72 + Math.sin(S.t * 2) * 6; S.ship.x = S.ship.tx; }
+    else if (S.mode === "over" || S.mode === "pause") { updateParts(dt); }
+    draw(S.mode === "play" || S.mode === "title" ? dt : 0);
+    requestAnimationFrame(frame);
+  }
+
+  S.best = loadBest();
+  resize();
+  parkShip();
+  paintHud(true);
+  showTitle();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
