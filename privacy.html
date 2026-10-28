@@ -9,7 +9,7 @@
 <body>
 <main>
 <h1>Cherri Shortcuts Privacy Policy</h1>
-<p class="muted">Effective October 20, 2026 · Last updated October 21, 2026</p>
+<p class="muted">Effective October 20, 2026 · Last updated October 28, 2026</p>
 
 <p class="lead">Cherri Shortcuts doesn't collect your personal data. Your code stays on your device, with one exception: when you tap Export, your shortcut is sent to a signing service so iOS will accept it.</p>
 
@@ -25,6 +25,11 @@
 <p>iOS only imports signed shortcuts. When you tap Export, Cherri Shortcuts compiles your code and sends the compiled, unsigned shortcut to <strong>HubSign</strong> (<code>hubsign.routinehub.services</code>), a signing service run by RoutineHub. HubSign returns the signed shortcut, and Cherri Shortcuts hands it to you through the iOS share sheet.</p>
 <p>The request contains the compiled shortcut (which includes anything you wrote into it, such as text and URLs), the name "Shortcut", and the app and Cherri compiler version numbers. As with any internet request, HubSign's servers can also see your device's IP address. If HubSign is busy, the app may repeat the same request a couple of times.</p>
 <p>Cherri Shortcuts doesn't control HubSign, and RoutineHub's own policies govern how it handles requests. Please don't put passwords or other secrets in code you export. By default Cherri Shortcuts asks you before exporting, and you can change that in Settings.</p>
+
+<h2>What leaves your device: Import</h2>
+<p>Import turns a shortcut you already have back into Cherri code. You give Cherri Shortcuts an iCloud link to the shortcut, either by pasting it into the app or by choosing Cherri Shortcuts in the Shortcuts app's share sheet. Nothing is requested until you tap Import or share a link.</p>
+<p>To get the shortcut, the app contacts <strong>Apple's iCloud sharing service</strong> (<code>icloud.com</code>) and downloads the shortcut file from the address iCloud returns. Apple can see the link you asked for and your device's IP address, and Apple's own policies govern that. The app then converts the shortcut into Cherri code on your device. The developer does not receive the link, the shortcut, or the code.</p>
+<p>When you share a link from the Shortcuts app, a small extension passes the link to Cherri Shortcuts through storage that only the app and its extension can reach. The link is deleted as soon as the app picks it up, and the app ignores and deletes a link that has been waiting more than 15 minutes.</p>
 
 <h2>What we don't do</h2>
 <ul>
