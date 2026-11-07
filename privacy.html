@@ -9,9 +9,9 @@
 <body>
 <main>
 <h1>Cherri Shortcuts Privacy Policy</h1>
-<p class="muted">Effective October 20, 2026 · Last updated October 28, 2026</p>
+<p class="muted">Effective October 20, 2026 · Last updated November 7, 2026</p>
 
-<p class="lead">Cherri Shortcuts doesn't collect your personal data. Your code stays on your device, with one exception: when you tap Export, your shortcut is sent to a signing service so iOS will accept it.</p>
+<p class="lead">Cherri Shortcuts doesn't collect your personal data. Your code stays on your device, with one exception: when you tap Export, your shortcut is sent to a signing server run by the developer so iOS will accept it.</p>
 
 <h2>What stays on your device</h2>
 <ul>
@@ -22,9 +22,9 @@
 <p>All of this is stored locally in the app's own storage. Compiling happens entirely on your device and uses no network connection.</p>
 
 <h2>What leaves your device: Export</h2>
-<p>iOS only imports signed shortcuts. When you tap Export, Cherri Shortcuts compiles your code and sends the compiled, unsigned shortcut to <strong>HubSign</strong> (<code>hubsign.routinehub.services</code>), a signing service run by RoutineHub. HubSign returns the signed shortcut, and Cherri Shortcuts hands it to you through the iOS share sheet.</p>
-<p>The request contains the compiled shortcut (which includes anything you wrote into it, such as text and URLs), the name "Shortcut", and the app and Cherri compiler version numbers. As with any internet request, HubSign's servers can also see your device's IP address. If HubSign is busy, the app may repeat the same request a couple of times.</p>
-<p>Cherri Shortcuts doesn't control HubSign, and RoutineHub's own policies govern how it handles requests. Please don't put passwords or other secrets in code you export. By default Cherri Shortcuts asks you before exporting, and you can change that in Settings.</p>
+<p>iOS only imports signed shortcuts. When you tap Export, Cherri Shortcuts compiles your code and sends the compiled, unsigned shortcut to the <strong>Cherri Shortcuts signing server</strong>, a small service run by the developer. The server signs the shortcut and returns it, and Cherri Shortcuts hands it to you through the iOS share sheet.</p>
+<p>The request contains the compiled shortcut (which includes anything you wrote into it, such as text and URLs), its name, and the app and Cherri compiler version numbers. As with any internet request, the server can also see your device's IP address, which it holds in memory for about a minute to limit abuse and does not write down. The connection is encrypted (HTTPS) and passes through <strong>Tailscale's</strong> relay network, whose own privacy policy covers the connection data it handles. If the server is busy, the app may repeat the same request a couple of times.</p>
+<p>The server signs the shortcut using the signing tool built into macOS, which may contact Apple's servers, and Apple's own policies govern that. The server keeps your shortcut only for the few seconds that signing takes and then deletes it. It does not store your shortcut or its name, and its log records only the time, the file size and whether signing worked. Please don't put passwords or other secrets in code you export. By default Cherri Shortcuts asks you before exporting, and you can change that in Settings.</p>
 
 <h2>What leaves your device: Import</h2>
 <p>Import turns a shortcut you already have back into Cherri code. You give Cherri Shortcuts an iCloud link to the shortcut, either by pasting it into the app or by choosing Cherri Shortcuts in the Shortcuts app's share sheet. Nothing is requested until you tap Import or share a link.</p>
@@ -37,7 +37,7 @@
 <li>No ads.</li>
 <li>No analytics or tracking tools.</li>
 <li>No selling or sharing of your data.</li>
-<li>The app itself sends the developer no data. Feedback reaches the developer only if you choose to submit it (see Feedback below).</li>
+<li>The developer keeps no copy of what you export and receives no other data from the app. Feedback reaches the developer only if you choose to submit it (see Feedback below).</li>
 </ul>
 
 <h2>Feedback</h2>
