@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cherri Helper Help</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+ol { padding-left: 22px; }
+ol li { margin-bottom: 12px; }
+h3 { font-size: 1.05rem; margin: 22px 0 6px; }
+</style>
+</head>
+<body>
+<main>
+<h1>Cherri Helper Help</h1>
+<p class="lead">Everything you need to set up Cherri Helper and fix the usual snags.</p>
+<p class="muted"><a href="#setup">Setup</a> · <a href="#trouble">Troubleshooting</a> · <a href="#faq">Questions</a></p>
+
+<h2 id="what">What Cherri Helper does</h2>
+<p>iOS only imports signed shortcuts. When you tap Export in Cherri Shortcuts, the shortcut has to be signed first. Cherri Helper lets your own Mac do that. Your iPhone sends the shortcut to your Mac over your Wi-Fi, your Mac signs it, and it comes straight back. Nothing goes through the developer's signing server.</p>
+<p>It lives in your menu bar (the cherry icon), has no Dock icon, and uses very little.</p>
+
+<h2 id="setup">Setup</h2>
+<h3>What you need</h3>
+<ul>
+<li>A Mac with macOS 13 or later, signed in to iCloud and online.</li>
+<li>Your iPhone with Cherri Shortcuts, on the same Wi-Fi network as the Mac.</li>
+</ul>
+
+<h3>Steps</h3>
+<ol>
+<li><strong>Install.</strong> Open the downloaded <code>.dmg</code> and drag Cherri Helper onto the Applications folder.</li>
+<li><strong>Open it.</strong> Open Cherri Helper from Applications. The first time, macOS says it's an app downloaded from the Internet. Click <strong>Open</strong>. If your firewall asks about incoming connections, click <strong>Allow</strong>.</li>
+<li><strong>Follow the welcome screen.</strong> It checks what you need, shows a QR code, and waits for your iPhone.</li>
+<li><strong>Pair.</strong> In Cherri Shortcuts, go to <strong>Settings → Signing</strong>, choose <strong>My Mac</strong>, tap <strong>Scan QR Code</strong>, and point your camera at the code on your Mac. The welcome screen says <em>Connected</em> when it works.</li>
+<li><strong>Start at login.</strong> On the last page, leave <strong>Start Cherri Helper when I log in</strong> on. Cherri Helper has to be running for your iPhone to sign, and this keeps it running after restarts.</li>
+</ol>
+<p>That's it. Export in Cherri Shortcuts now signs on your Mac.</p>
+
+<h3>Pairing again, or another iPhone</h3>
+<p>Click the cherry in your menu bar and choose <strong>Pair an iPhone…</strong> to bring the QR code back. Every iPhone you want to use scans the same code. To start fresh, open <strong>Settings → Pairing → Reset Pairing</strong>. That makes a new code, and every iPhone has to scan it again.</p>
+
+<h2 id="trouble">Troubleshooting</h2>
+
+<h3>My iPhone can't reach my Mac</h3>
+<ul>
+<li><strong>Is Cherri Helper running?</strong> Look for the cherry in your menu bar. If it isn't there, open Cherri Helper from Applications.</li>
+<li><strong>Same Wi-Fi?</strong> Your iPhone and Mac must be on the same network. Guest networks, some office or school networks, and some VPNs block devices from finding each other. Turn off any VPN and try again.</li>
+<li><strong>Is the Mac awake?</strong> A sleeping Mac can't answer. Wake it and try again.</li>
+<li><strong>Firewall.</strong> If macOS asked whether Cherri Helper can accept incoming connections and you clicked Don't Allow, open <strong>System Settings → Network → Firewall → Options</strong> and allow it.</li>
+<li><strong>Local network permission.</strong> On your iPhone, open <strong>Settings → Privacy &amp; Security → Local Network</strong> and make sure Cherri Shortcuts is on.</li>
+<li>In Cherri Shortcuts, open <strong>Settings → Signing</strong> and tap <strong>Test Connection</strong>. If it still fails, scan the QR code again.</li>
+</ul>
+
+<h3>"Signing failed on this Mac"</h3>
+<p>Make sure your Mac is signed in to iCloud (System Settings, then your name at the top) and connected to the internet. Apple's signing tool needs both.</p>
+
+<h3>"Signing is busy right now"</h3>
+<p>Your Mac is already signing something. Wait a moment and try again.</p>
+
+<h3>Cherri Helper isn't running after I restart</h3>
+<p>Open Cherri Helper's <strong>Settings</strong> (click the cherry, then Settings) and turn on <strong>Start Cherri Helper when I log in</strong>. You can also manage it in <strong>System Settings → General → Login Items</strong>.</p>
+
+<h3>The welcome screen keeps showing</h3>
+<p>It shows until an iPhone has paired, so you don't have to hunt for the code. Once your iPhone connects, it stays out of your way. You can bring it back any time from <strong>Settings → Support → Show Welcome Screen</strong>.</p>
+
+<h3>Still stuck?</h3>
+<p>Open <strong>Settings → Support → Report a Problem</strong>. It opens an email to the developer with the helper's log and basic info about your Mac, and you can read and edit it before sending. No mail account set up? Use <strong>Copy Report Instead</strong> and paste it into an email to <a href="mailto:dastefster@gmail.com">dastefster@gmail.com</a>.</p>
+
+<h2 id="faq">Questions</h2>
+
+<h3>Is my shortcut sent anywhere else?</h3>
+<p>Not to the developer. It goes from your iPhone to your Mac over your local network, encrypted with a key that only your paired iPhone and your Mac have. Your Mac signs it with the signing tool built into macOS, which may contact Apple.</p>
+
+<h3>How do updates work?</h3>
+<p>Cherri Helper checks once a day and tells you when a new version is available. You can check any time in <strong>Settings → General → Check for Updates Now</strong>. Every update is digitally signed, so only releases from the developer can install.</p>
+
+<h3>Can I go back to the Cherri server?</h3>
+<p>Yes. In Cherri Shortcuts, open <strong>Settings → Signing</strong> and choose <strong>Cherri Server</strong>.</p>
+
+<h3>How do I uninstall it?</h3>
+<ol>
+<li>Click the cherry in your menu bar and choose <strong>Quit Cherri Helper</strong>.</li>
+<li>Drag Cherri Helper from Applications to the Trash.</li>
+<li>If it's still listed in <strong>System Settings → General → Login Items</strong>, remove it there.</li>
+<li>In Cherri Shortcuts, switch Signing back to <strong>Cherri Server</strong>.</li>
+</ol>
+
+<footer>
+<p><a href="../index.html">Cherri Shortcuts</a> · Made by Stefan Hottel (@dastefster) 🍒🔨</p>
+</footer>
+</main>
+</body>
+</html>

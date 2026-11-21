@@ -3,6 +3,22 @@
     <channel>
         <title>Cherri Helper</title>
         <item>
+            <title>0.0.7</title>
+            <pubDate>Sat, 21 Nov 2026 16:31:34 -0500</pubDate>
+            <sparkle:version>7</sparkle:version>
+            <sparkle:shortVersionString>0.0.7</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+                <ul>
+                    <li>A welcome screen walks first-time users through setup and pairing.</li>
+                    <li>New Help menu with setup and troubleshooting.</li>
+                    <li>Once set up, Cherri Helper no longer opens a window when it launches.</li>
+                    <li>A second copy of the app quietly steps aside instead of adding a second menu-bar icon.</li>
+                </ul>
+            ]]></description>
+            <enclosure url="https://github.com/dastefster/cherricuts/releases/download/helper-0.0.7/Cherri-Helper-0.0.7.dmg" length="2098224" type="application/octet-stream" sparkle:edSignature="WhZ2vjeJrcFVHfJi2B8hnjWbyyiHdfHXJ4nlVnhl4ftuEeHE0PyJi+avyajPQaVecdC/rWwC52FaK66QrMbcCA=="/>
+        </item>
+        <item>
             <title>0.0.4</title>
             <pubDate>Sat, 21 Nov 2026 12:58:01 -0500</pubDate>
             <sparkle:version>4</sparkle:version>
