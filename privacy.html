@@ -9,9 +9,9 @@
 <body>
 <main>
 <h1>Cherri Shortcuts Privacy Policy</h1>
-<p class="muted">Effective October 20, 2026 · Last updated November 7, 2026</p>
+<p class="muted">Effective October 20, 2026 · Last updated November 21, 2026</p>
 
-<p class="lead">Cherri Shortcuts doesn't collect your personal data. Your code stays on your device, with one exception: when you tap Export, your shortcut is sent to a signing server run by the developer so iOS will accept it.</p>
+<p class="lead">Cherri Shortcuts doesn't collect your personal data. Your code stays on your device, with one exception: when you tap Export, your shortcut has to be signed so iOS will accept it. By default it is sent to a signing server run by the developer. If you set up the optional Cherri Helper app on your Mac, it is signed on your own Mac instead, and the developer's server is not involved.</p>
 
 <h2>What stays on your device</h2>
 <ul>
@@ -22,10 +22,20 @@
 <p>All of this is stored locally in the app's own storage. Compiling happens entirely on your device and uses no network connection.</p>
 
 <h2>What leaves your device: Export</h2>
+<p>This is how Export works by default. If you have paired a Mac with Cherri Helper and chosen it as your signer, see the next section instead.</p>
 <p>iOS only imports signed shortcuts. When you tap Export, Cherri Shortcuts compiles your code and sends the compiled, unsigned shortcut to <strong>a custom signing server</strong>, a small service run by the developer. The server signs the shortcut and returns it, and Cherri Shortcuts hands it to you through the iOS share sheet.</p>
 <p>The request contains the compiled shortcut (which includes anything you wrote into it, such as text and URLs), its name, and the app and Cherri compiler version numbers. As with any internet request, the server can also see your device's IP address, which it holds in memory for about a minute to limit abuse and does not write down. The connection is encrypted (HTTPS) and passes through <strong>Tailscale's</strong> relay network, whose own privacy policy covers the connection data it handles. If the server is busy, the app may repeat the same request a couple of times.</p>
 <p>To confirm that requests come from a genuine copy of the app, Cherri Shortcuts uses Apple's App Attest. This sends the server a random key made on your device and proof that the app is genuine. The server keeps that key so it can recognize the same copy of the app later. It contains no name or other personal information, and it isn't shared with anyone.</p>
 <p>The server signs the shortcut using the signing tool built into macOS, which may contact Apple's servers, and Apple's own policies govern that. The server keeps your shortcut only for the few seconds that signing takes and then deletes it. It does not store your shortcut or its name, and its log records only the time, the file size and whether signing worked. Please don't put passwords or other secrets in code you export. By default Cherri Shortcuts asks you before exporting, and you can change that in Settings.</p>
+
+<h2>What leaves your device: Export through your own Mac</h2>
+<p>Cherri Helper is an optional, free Mac app. You install it yourself, pair it with Cherri Shortcuts by scanning a QR code, and then choose My Mac as your signer. When you do, Export sends the compiled, unsigned shortcut straight from your iPhone to your Mac over your local network. It does not go to the developer's signing server, and the developer receives nothing.</p>
+<p>The connection between your iPhone and your Mac is encrypted with a key that is created when you pair. The key is stored in your iPhone's Keychain and on your Mac, and Reset Pairing in Cherri Helper's Settings ends the pairing. So your iPhone can find your Mac, Cherri Helper announces itself on your local network, and iOS may ask your permission to use the local network.</p>
+<p>Your Mac signs the shortcut with the same signing tool built into macOS that the developer's server uses, so the same Apple note applies: signing may contact Apple, which <a href="https://support.apple.com/guide/shortcuts-mac/apd455c82f02/mac">validates a copy of the shortcut</a>, and Apple's own policies govern that. Your Mac needs to be signed in to iCloud for this to work. Cherri Helper does the signing in a temporary folder and deletes it afterward. It does not keep your shortcut or its name.</p>
+<p>Cherri Helper keeps a log on your Mac, in your Library folder under Logs. For each export it records only the time, the file size, and whether signing worked, plus start-up and error messages. The log stays on your Mac, and the developer never receives it unless you choose to send it (see Report a Problem below).</p>
+<p><strong>Updates.</strong> Cherri Helper checks once a day for a new version by requesting a small file from the developer's website, which is hosted by GitHub. Like any website request, that shows GitHub your IP address and the app's name and version. It sends no other information about you or your Mac, and every update is digitally signed so only releases from the developer can install. If you choose to update, the download also comes from GitHub. You can turn the daily check off in Settings.</p>
+<p><strong>Report a Problem.</strong> Settings has a Report a Problem button that opens a draft email to the developer with the recent log and basic system information: the app version, your macOS version, your Mac model and processor, whether it starts at login, and its current status. It does not include your name, your Mac's name, or its serial number. Nothing is sent until you review the email and send it yourself. If you don't use the Mail app, Copy Report Instead puts the same text on your clipboard so you can paste it wherever you like.</p>
+<p>Cherri Helper has no accounts, no ads, and no analytics or tracking tools.</p>
 
 <h2>What leaves your device: Import</h2>
 <p>Import turns a shortcut you already have back into Cherri code. You give Cherri Shortcuts an iCloud link to the shortcut, either by pasting it into the app or by choosing Cherri Shortcuts in the Shortcuts app's share sheet. Nothing is requested until you tap Import or share a link.</p>
@@ -38,7 +48,7 @@
 <li>No ads.</li>
 <li>No analytics or tracking tools.</li>
 <li>No selling or sharing of your data.</li>
-<li>The developer keeps no copy of what you export and receives no other data from the app. Feedback reaches the developer only if you choose to submit it (see Feedback below).</li>
+<li>The developer keeps no copy of what you export, whether it is signed by the server or on your own Mac, and receives no other data from the app. Feedback reaches the developer only if you choose to submit it (see Feedback below).</li>
 </ul>
 
 <h2>Feedback</h2>

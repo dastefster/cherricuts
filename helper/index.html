@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cherri Helper for Mac</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+.download { display: inline-block; margin: 4px 0 8px; padding: 12px 22px; background: var(--accent); color: var(--on-accent); border-radius: 10px; font-weight: 600; text-decoration: none; }
+ol { padding-left: 22px; }
+ol li { margin-bottom: 14px; }
+.shot { margin: 8px 0 20px; text-align: center; }
+.shot img { width: 100%; max-width: 340px; height: auto; }
+.shot figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 2px; }
+</style>
+</head>
+<body>
+<main>
+<h1>Cherri Helper for Mac</h1>
+<p class="lead">Sign the shortcuts you export from Cherri Shortcuts on your own Mac, instead of through the developer's server.</p>
+
+<p><a class="download" href="https://github.com/dastefster/cherricuts/releases/latest/download/Cherri-Helper.dmg">Download Cherri Helper</a></p>
+<p class="muted">For Macs with macOS 13 or later, Apple silicon or Intel. Signed and notarized by Apple.</p>
+
+<h2>What it does</h2>
+<p>iOS only imports signed shortcuts. Cherri Helper is a small app that lives in your Mac's menu bar. When you tap Export in Cherri Shortcuts, your iPhone sends the compiled shortcut to your Mac over your home network, your Mac signs it with the tool built into macOS, and the signed shortcut goes straight back to your iPhone.</p>
+
+<h2>What you need</h2>
+<ul>
+<li>A Mac signed in to iCloud. Signing a shortcut needs it.</li>
+<li>Your iPhone and your Mac on the same Wi-Fi network.</li>
+<li>The Mac awake and Cherri Helper running when you export.</li>
+</ul>
+
+<h2>Install it</h2>
+<ol>
+<li><strong>Download and open the file.</strong> Open the downloaded <em>Cherri-Helper.dmg</em>. A window appears with the Cherri Helper icon and an Applications folder.</li>
+<li><strong>Drag Cherri Helper onto Applications.</strong> This copies it to your Mac. You can eject the disk image afterward.</li>
+<li><strong>Open Cherri Helper from your Applications folder.</strong> The first time, see the next section.</li>
+</ol>
+
+<h2>The first time you open it</h2>
+<p>macOS shows a message saying Cherri Helper is an app downloaded from the Internet and asks whether you want to open it. That is normal for any app that doesn't come from the Mac App Store. Cherri Helper is signed with the developer's Apple Developer ID and checked by Apple's notarization service, so the message should also say Apple checked it for malicious software and found none. Click <strong>Open</strong>. macOS asks only once.</p>
+<figure class="shot">
+<img src="gatekeeper-open.png" alt="The macOS message: Cherri Helper is an app downloaded from the Internet. Are you sure you want to open it? Apple checked it for malicious software and none was detected. Buttons: Cancel and Open.">
+<figcaption>This is the message. Click Open. It names the browser you downloaded with, so yours may say Chrome or Firefox instead of Safari.</figcaption>
+</figure>
+<p>If your Mac's firewall is on, it may also ask whether Cherri Helper can accept incoming network connections. Click <strong>Allow</strong>. It needs this to hear from your iPhone.</p>
+<p>If macOS instead says it can't check the app for malicious software, the download may not have finished or may have been changed. Delete it and download it again.</p>
+
+<h2>Pair your iPhone</h2>
+<p>Cherri Helper opens a window with a QR code the first time you launch it. If you closed it, click the cherry in your menu bar and choose <strong>Pair an iPhone</strong>.</p>
+<ol>
+<li>In Cherri Shortcuts, open <strong>Settings</strong>, then <strong>Signing</strong>, and choose <strong>My Mac</strong>.</li>
+<li>Tap <strong>Scan QR Code</strong> and point your iPhone at the code on your Mac.</li>
+<li>Allow camera and local network access when iOS asks.</li>
+<li>Tap <strong>Test Connection</strong>. It should say it's connected.</li>
+</ol>
+<p>After that, Export signs on your Mac.</p>
+
+<h2>Keeping it running</h2>
+<p>Cherri Helper has to be running for your iPhone to sign. It lives in the menu bar and uses very little. In its Settings you can turn on <strong>Start Cherri Helper when I log in</strong>. If you quit it, open it again from Applications.</p>
+
+<h2>Updates</h2>
+<p>Cherri Helper checks for updates once a day and tells you when one is ready. You can also check any time in Settings. Updates are signed, so only releases from the developer can install.</p>
+
+<h2>Privacy</h2>
+<p>Your shortcut travels from your iPhone to your Mac over an encrypted connection on your own network. It does not go to the developer. Your Mac signs it with the signing tool built into macOS, which may contact Apple's servers, and Apple's own policies govern that. Cherri Helper keeps the shortcut only for the few seconds signing takes. Its log records times, file sizes and results, never your shortcuts. Please don't put passwords or other secrets in code you export.</p>
+<p>The full <a href="../privacy.html">privacy policy</a> covers Cherri Shortcuts itself.</p>
+
+<h2>Something wrong?</h2>
+<p>The <a href="help.html">help page</a> covers setup and the usual snags. In Cherri Helper's Settings, open the Support tab and choose <strong>Report a Problem</strong>. It prepares an email with your Mac's basic details and the helper's log, and you can read it before you send it. Or write to <a href="mailto:dastefster@gmail.com">dastefster@gmail.com</a>.</p>
+
+<footer>
+<p>Made by Stefan Hottel (@dastefster) 🍒🔨. Cherri Helper is an independent app and isn't affiliated with or endorsed by Apple or the Cherri project. Mac, macOS, iCloud and Shortcuts are trademarks of Apple Inc.</p>
+</footer>
+</main>
+</body>
+</html>
